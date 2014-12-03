@@ -95,9 +95,10 @@ int main (int argc, char *argv[])
 							char *para_2 = tmp;
 	
 							int para_3 = rand()%512;
-							fprintf(stdout,"calling sys_read(%d,%x,%d)\n", para_1, (unsigned int)&tmp, para_3);
+							fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
 	
 							int ret = 0;
+							// skip fd = 0, since it will read inputs from screen
 							if (para_1)
 							{
 								ret = syscall(SYS_read, para_1, para_2, para_3);
@@ -105,10 +106,10 @@ int main (int argc, char *argv[])
 								if (ret == -1)
 								{
 									//int errsv = errno;
-									fprintf(stdout, "sys_read failed with errno = %d\n", errno);
+									fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 								}else 
 								{
-									fprintf(stdout, "sys_read success with %s\n", para_2 );
+									fprintf(stdout, "child = %d sys_read success with %s\n", getpid(), para_2 );
 								}
 							}
 	
