@@ -64,41 +64,70 @@ int main (int argc, char *argv[])
 		fd_index++;
 	}
 
-	int t;
-	for(t = 0; t < files_number + 3 + 100; t++)
-		printf("File descriptors # %d : %d \n\n", t, Pool->fd_pool[t]);
+// 	int t;
+// 	for(t = 0; t < files_number + 3 + 100; t++)
+// 		printf("File descriptors # %d : %d \n\n", t, Pool->fd_pool[t]);
+	/*******************************************/
+	/**************forkchildren()***************/
+	/*******************************************/
+
+#define CHILD_NO 4	
+    pid_t childPID[CHILD_NO];
+
 	
-	/*******************************************/
-	/*******************syscall()***************/
-	/*******************************************/
-/*
-	while(1)
+	for (int i = 0; i < CHILD_NO; i++)
+
 	{
+		    childPID[i] = fork();
+			if(childPID[i] >= 0) // fork was successful
+			{
+				if(childPID[i] == 0) // child process
+				{
+						/*******************************************/
+						/*******************syscall()***************/
+						/*******************************************/
+
+						while(1)
+						{
 	
-		int para_1 = Pool->fd_pool[rand()%(files_number + 3 + 100)];
-		char tmp[32];
-		char *para_2 = tmp;
+							int para_1 = Pool->fd_pool[rand()%(files_number + 3 + 100)];
+							char tmp[32];
+							char *para_2 = tmp;
 	
-		int para_3 = rand()%512;
-		fprintf(stdout,"calling sys_read(%d,%x,%d)\n", para_1, (unsigned int)&tmp, para_3);
+							int para_3 = rand()%512;
+							fprintf(stdout,"calling sys_read(%d,%x,%d)\n", para_1, (unsigned int)&tmp, para_3);
 	
-		int ret = 0;
-		if (para_1)
-		{
-			ret = syscall(SYS_read, para_1, para_2, para_3);
+							int ret = 0;
+							if (para_1)
+							{
+								ret = syscall(SYS_read, para_1, para_2, para_3);
 		
-			if (ret == -1)
-			{
-				//int errsv = errno;
-				fprintf(stdout, "sys_read failed with errno = %d\n", errno);
-			}else 
-			{
-				fprintf(stdout, "sys_read success with %s\n", para_2 );
+								if (ret == -1)
+								{
+									//int errsv = errno;
+									fprintf(stdout, "sys_read failed with errno = %d\n", errno);
+								}else 
+								{
+									fprintf(stdout, "sys_read success with %s\n", para_2 );
+								}
+							}
+	
+						}
+
+					return 0;
+				}
+				
 			}
-		}
+			else // fork failed
+			{
+				printf("\n Fork failed, quitting!!!!!!\n");
+				return 1;
+			}
 	
 	}
-*/
+
+	
+
 	int k; 
 	for(k = 0; k < cur_dir_num; k++)
 		free(Pool->dirs_pool[k]);
