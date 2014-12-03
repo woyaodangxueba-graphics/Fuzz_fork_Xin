@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <sys/stat.h>
 // struct node
 // {
 // 	int val;
@@ -20,6 +20,7 @@
 struct para_pool
 {
 	int *fd_pool;
+	int *mode;
 	char *dirs_pool[1000];
 	mode_t mode_pool[1000];
 };
