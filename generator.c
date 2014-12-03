@@ -65,7 +65,7 @@ void generator_fd_dir(struct para_pool *pool, char *direct, int *index)
 				(*index)++;
 
 				regular = determine_dir(abs_dir);
-				printf("Dir: %s \n regular = %d \n\n", abs_dir, regular);
+				//printf("Dir: %s \n regular = %d \n\n", abs_dir, regular);
 				
 
 				if (regular == 0)
@@ -156,7 +156,7 @@ void generator_init(char *direct, int *files_number)
 				(*files_number)++;
 
 				regular = determine_dir(abs_dir);
-				printf("Good \n");
+				//printf("Good \n");
 
 				if (regular == 0)
 					generator_init_fd(abs_dir, files_number);
