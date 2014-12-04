@@ -80,24 +80,25 @@ int main (int argc, char *argv[])
 	}
 
 	//3. create log files FILE * child_log[].
-	
-	FILE * child_log[CHILD_NO];
-	//open a log file, prepare to append new text.
+	if(flag_log)
+	{
+		FILE * child_log[CHILD_NO];
+		//open a log file, prepare to append new text.
  
 
-	for(int i = 0;i < CHILD_NO; i++)
-	{
-	char log_name[12] = "./log/log_";
-	log_name[10] = '0' +i;
-	log_name[11] ='\0';
-	//strcat(log_name,temp);
-	fprintf(stdout,"log_name = %s\n",log_name); 
-	child_log[i] = fopen(log_name, "a");
+		for(int i = 0;i < CHILD_NO; i++)
+		{
+			char log_name[12] = "./log/log_";
+			log_name[10] = '0' +i;
+			log_name[11] ='\0';
+			//strcat(log_name,temp);
+			fprintf(stdout,"log_name = %s\n",log_name); 
+			child_log[i] = fopen(log_name, "a");
 
+		}
 	}
- 					
-
 	
+ 	
 	/*******************************************/
 	/**************forkchildren()***************/
 	/*******************************************/
