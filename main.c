@@ -22,7 +22,7 @@ int flag_log = 0;
 int main (int argc, char *argv[])
 {
 	//get path from argv
-	if (argc <= 3) {
+	if (argc < 3) {
        fprintf(stderr,"usage:\t%s -v victimfile(absolutepath)\n", argv[0]);
        exit(0);
     }
