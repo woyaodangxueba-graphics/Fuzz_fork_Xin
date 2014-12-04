@@ -17,27 +17,39 @@
 
 #define CHILD_NO 4
 
+int flag_log = 0;
+
 int main (int argc, char *argv[])
 {
 	//get path from argv
-	if (argc != 3) {
+	if (argc <= 3) {
        fprintf(stderr,"usage:\t%s -v victimfile(absolutepath)\n", argv[0]);
        exit(0);
     }
     
     char *v = "-v";
+    char *l = "-l";
     char *dir_path;
     
-    if (strcmp(argv[1], v) == 0){
-         dir_path = argv[2];
-         //fprintf(stderr,"%s\n",dir_path);
-        }
-    else
+    for (int i = 1;i < argc;  )
     {
-    	fprintf(stderr,"invalid arguments\n");
-    	fprintf(stderr,"usage:\t%s -v victimfile(absolutepath)\n", argv[0]);
-    	exit(0);
-    } 
+    	if (strcmp(argv[i], v) == 0){
+        	dir_path = argv[i+1];
+        	i+=2;
+        }
+		else if (strcmp(argv[i], l) == 0)
+		{
+			flag_log = 1;
+			i++;
+		}
+		else{
+			fprintf(stderr,"invalid arguments\n");
+			fprintf(stderr,"usage:\t%s -v victimfile(absolutepath)\n", argv[0]);
+			exit(0);
+		} 
+    }
+    
+    
 	
 	/*******************************************/
 	/*******************init()******************/
@@ -125,7 +137,8 @@ int main (int argc, char *argv[])
       						
 							if (para_1)
 								{
-								fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
+								if(flag_log)
+									fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
 								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
 								}
 							int ret = 0;
@@ -137,11 +150,13 @@ int main (int argc, char *argv[])
 								if (ret == -1)
 								{
 									//int errsv = errno;
-									fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
+									if(flag_log)
+										fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 									fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 								}else 
 								{
-									fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), para_2 );
+									if(flag_log)
+										fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), para_2 );
 									fprintf(stdout, "child = %d sys_read success \n", getpid());
 								}
 							}
@@ -202,7 +217,8 @@ int main (int argc, char *argv[])
 							int para_3 = rand()%512;
 							if (para_1)
 								{
-								fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
+								if(flag_log)
+									fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
 								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
 								}
 							int ret = 0;
@@ -214,11 +230,13 @@ int main (int argc, char *argv[])
 								if (ret == -1)
 								{
 									//int errsv = errno;
-									fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
+									if(flag_log)
+										fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 									fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 								}else 
 								{
-									fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), para_2 );
+									if(flag_log)
+										fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), para_2 );
 									fprintf(stdout, "child = %d sys_read success\n", getpid() );
 								}
 							}
