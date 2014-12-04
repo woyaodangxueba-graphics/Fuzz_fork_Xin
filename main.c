@@ -69,7 +69,21 @@ int main (int argc, char *argv[])
 
 	//3. create log files FILE * child_log[].
 	
-	FILE child_log[CHILD_NO];
+	FILE * child_log[CHILD_NO];
+	//open a log file, prepare to append new text.
+ 
+
+	for(int i = 0;i < CHILD_NO; i++)
+	{
+	char log_name[12] = "./log/log_";
+	log_name[10] = '0' +i;
+	log_name[11] ='\0';
+	//strcat(log_name,temp);
+	fprintf(stdout,"log_name = %s\n",log_name); 
+	child_log[i] = fopen(log_name, "a");
+
+	}
+ 					
 
 	
 	/*******************************************/
@@ -95,12 +109,7 @@ int main (int argc, char *argv[])
 						//after fork(), child will reinit seed to 0
 						srand(time(NULL));
 						
-						//open a log file, prepare to append new text.
 						
-						char log_name[] = "./log/log_";
-						strcat(log_name,itoa(i));
-						 
-						child_log[i] = fopen(log_name, "a");
 						
 						
 						while(1)
@@ -126,10 +135,10 @@ int main (int argc, char *argv[])
 								if (ret == -1)
 								{
 									//int errsv = errno;
-									fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
+									fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 								}else 
 								{
-									fprintf(stdout, "child = %d sys_read success with %s\n", getpid(), para_2 );
+									fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), para_2 );
 								}
 							}
 	
@@ -178,12 +187,6 @@ int main (int argc, char *argv[])
 						//after fork(), child will reinit seed to 0
 						srand(time(NULL));
 						
-						//open a log file, prepare to append new text.
-						
-						char log_name[] = "./log/log_";
-						strcat(log_name,itoa(i));
-						 
-						child_log[i] = fopen(log_name, "a");
 						
 						while(1)
 						{
@@ -205,10 +208,10 @@ int main (int argc, char *argv[])
 								if (ret == -1)
 								{
 									//int errsv = errno;
-									fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
+									fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 								}else 
 								{
-									fprintf(stdout, "child = %d sys_read success with %s\n", getpid(), para_2 );
+									fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), para_2 );
 								}
 							}
 	
