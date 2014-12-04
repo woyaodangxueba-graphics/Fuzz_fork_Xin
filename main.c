@@ -124,8 +124,10 @@ int main (int argc, char *argv[])
 							  
       						
 							if (para_1)
+								{
 								fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
-	
+								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
+								}
 							int ret = 0;
 							// skip fd = 0, since it will read inputs from screen
 							if (para_1)
@@ -136,9 +138,11 @@ int main (int argc, char *argv[])
 								{
 									//int errsv = errno;
 									fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
+									fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 								}else 
 								{
 									fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), para_2 );
+									fprintf(stdout, "child = %d sys_read success \n", getpid());
 								}
 							}
 	
@@ -197,8 +201,10 @@ int main (int argc, char *argv[])
 	
 							int para_3 = rand()%512;
 							if (para_1)
+								{
 								fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
-	
+								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
+								}
 							int ret = 0;
 							// skip fd = 0, since it will read inputs from screen
 							if (para_1)
@@ -209,9 +215,11 @@ int main (int argc, char *argv[])
 								{
 									//int errsv = errno;
 									fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
+									fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 								}else 
 								{
 									fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), para_2 );
+									fprintf(stdout, "child = %d sys_read success\n", getpid() );
 								}
 							}
 	
