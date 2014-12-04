@@ -80,12 +80,13 @@ int main (int argc, char *argv[])
 	}
 
 	//3. create log files FILE * child_log[].
+
+	FILE * child_log[CHILD_NO];
+	//open a log file, prepare to append new text.
+ 
 	if(flag_log)
 	{
-		FILE * child_log[CHILD_NO];
-		//open a log file, prepare to append new text.
- 
-
+		
 		for(int i = 0;i < CHILD_NO; i++)
 		{
 			char log_name[12] = "./log/log_";
