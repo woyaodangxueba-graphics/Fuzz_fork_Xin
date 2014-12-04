@@ -15,6 +15,8 @@
 
 #include "generator.h"
 
+#define CHILD_NO 4
+
 int main (int argc, char *argv[])
 {
 	//get path from argv
@@ -65,14 +67,16 @@ int main (int argc, char *argv[])
 		fd_index++;
 	}
 
-// 	int t;
-// 	for(t = 0; t < files_number + 3 + 100; t++)
-// 		printf("File descriptors # %d : %d \n\n", t, Pool->fd_pool[t]);
+	//3. create log files FILE * child_log[].
+	
+	FILE child_log[CHILD_NO];
+
+	
 	/*******************************************/
 	/**************forkchildren()***************/
 	/*******************************************/
 
-#define CHILD_NO 4	
+	
     pid_t childPID[CHILD_NO];
 
 	
@@ -91,6 +95,14 @@ int main (int argc, char *argv[])
 						//after fork(), child will reinit seed to 0
 						srand(time(NULL));
 						
+						//open a log file, prepare to append new text.
+						
+						char log_name[] = "./log/log_";
+						strcat(log_name,itoa(i));
+						 
+						child_log[i] = fopen(log_name, "a");
+						
+						
 						while(1)
 						{
 	
@@ -99,8 +111,11 @@ int main (int argc, char *argv[])
 							char *para_2 = tmp;
 	
 							int para_3 = rand()%512;
+							 
+							  
+      						
 							if (para_1)
-								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
+								fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
 	
 							int ret = 0;
 							// skip fd = 0, since it will read inputs from screen
@@ -143,11 +158,11 @@ int main (int argc, char *argv[])
 	{
 		pid_t result = waitpid(childPID[i], &status, WNOHANG);
 		if (result == 0) {
-		  fprintf(stdout, "Child = %d still alive\n",childPID[i]);
+		  //fprintf(stdout, "Child = %d still alive\n",childPID[i]);
 		} else if (result == -1) {
-		   fprintf(stdout, "Child = %d error\n",childPID[i]);
+		   //fprintf(stdout, "Child = %d error\n",childPID[i]);
 		} else {
-		  fprintf(stdout, "Child = %d exit\n",childPID[i]);
+		  //fprintf(stdout, "Child = %d exit and we respawn it here\n",childPID[i]);
 		  
 		  //respawn child here.
 		  
@@ -163,6 +178,13 @@ int main (int argc, char *argv[])
 						//after fork(), child will reinit seed to 0
 						srand(time(NULL));
 						
+						//open a log file, prepare to append new text.
+						
+						char log_name[] = "./log/log_";
+						strcat(log_name,itoa(i));
+						 
+						child_log[i] = fopen(log_name, "a");
+						
 						while(1)
 						{
 	
@@ -172,7 +194,7 @@ int main (int argc, char *argv[])
 	
 							int para_3 = rand()%512;
 							if (para_1)
-								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
+								fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), para_1, (unsigned int)&tmp, para_3);
 	
 							int ret = 0;
 							// skip fd = 0, since it will read inputs from screen
