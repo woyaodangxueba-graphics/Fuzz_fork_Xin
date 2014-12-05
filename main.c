@@ -23,21 +23,23 @@ int flag_log = 0;
 int main (int argc, char *argv[])
 {
 	//get path from argv
-	if (argc < 3) {
-       fprintf(stderr,"usage:\t%s -v victimfile(absolutepath)\n", argv[0]);
-       exit(0);
-    }
+	if (argc < 3) 
+	{
+		fprintf(stderr,"usage:\t%s -v victimfile(absolutepath)\n", argv[0]);
+       		exit(0);
+	}
     
-    char *v = "-v";
-    char *l = "-l";
-    char *dir_path;
+    	char *v = "-v";
+    	char *l = "-l";
+    	char *dir_path;
     
-    for (int i = 1;i < argc;  )
-    {
-    	if (strcmp(argv[i], v) == 0){
-        	dir_path = argv[i+1];
-        	i+=2;
-        }
+    	for (int i = 1;i < argc;  )
+    	{
+    		if (strcmp(argv[i], v) == 0)
+		{
+        		dir_path = argv[i+1];
+        		i+=2;
+        	}
 		else if (strcmp(argv[i], l) == 0)
 		{
 			flag_log = 1;
@@ -113,30 +115,26 @@ int main (int argc, char *argv[])
 	for (int i = 0; i < CHILD_NO; i++)
 
 	{
-		    childPID[i] = fork();
-			if(childPID[i] >= 0) // fork was successful
+		childPID[i] = fork();
+		if(childPID[i] >= 0) // fork was successful
+		{
+			if(childPID[i] == 0) // child process
 			{
-				if(childPID[i] == 0) // child process
+				//after fork(), child will reinit seed to 0
+				srand(time(NULL));
+						
+				while(1)
 				{
-						
-						
-						//after fork(), child will reinit seed to 0
-						srand(time(NULL));
-						
-						while(1)
-						{
 						/*******************************************/
 						/**************choose syscall()*************/
 						/*******************************************/
-						
-						int index_chosen_syscall = rand()%2; // 2 is syscall numbers this draft supports right now.
+					int index_chosen_syscall = rand()%2; // 2 is syscall numbers this draft supports right now.
 
 						/*******************************************/
 						/*****************rand para()***************/
 						/*******************************************/
 						
-						struct fuzz_sys_call child_copy_syscall = {
-						
+					struct fuzz_sys_call child_copy_syscall ={
 							.entrypoint = fuzz_sys_call_table[index_chosen_syscall].entrypoint,
 							.para1 = fuzz_sys_call_table[index_chosen_syscall].para1,
 							.para2 = fuzz_sys_call_table[index_chosen_syscall].para2,
@@ -144,153 +142,140 @@ int main (int argc, char *argv[])
 							.para4 = fuzz_sys_call_table[index_chosen_syscall].para4,
 							.para5 = fuzz_sys_call_table[index_chosen_syscall].para5,
 							.para6 = fuzz_sys_call_table[index_chosen_syscall].para6
+							};
 						
-						};
-						
-						switch(index_chosen_syscall)
+					switch(index_chosen_syscall)
+					{
+					case 0:
+						//sys_read
+						child_copy_syscall.para1 = Pool->fd_pool[rand()%(files_number + 3 + 100)];
+							
+						if(rand()%2)
 						{
-							case 0:
-							//sys_read
-							child_copy_syscall.para1 = Pool->fd_pool[rand()%(files_number + 3 + 100)];
-							
-							if(rand()%2)
-								{
-									char tmp[32];
-									child_copy_syscall.para2 = (unsigned long)tmp;
-								}
-							else
-								{
-									child_copy_syscall.para2 = (unsigned long)rand();
-								}
-							
-							child_copy_syscall.para3 = rand()%512;
-							
-							break;
-						
-							case 1:
-							//sys_chmod
-							child_copy_syscall.para1 =(unsigned long) Pool->dirs_pool[rand()%1000];
-							if(rand()%2)
-								{
-									child_copy_syscall.para2 = Pool->mode_pool[rand()%27];
-								}
-							else
-								{
-									child_copy_syscall.para2 = (unsigned int)rand();
-								}
-							break;
-						
-							default:
-							fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
-						
-						
+							char tmp[32];
+							child_copy_syscall.para2 = (unsigned long)tmp;
 						}
-						
-						/*******************************************/
-						/**********************log()****************/
-						/*******************************************/
-						
-						switch(index_chosen_syscall)
+						else
 						{
-							case 0:
-							//sys_read
-							if (child_copy_syscall.para1)
-							//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
-								{
-								if(flag_log)
-									fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
-								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2,(int) child_copy_syscall.para3);
-								}
+							child_copy_syscall.para2 = (unsigned long)rand();
+						}
 							
-							break;
+						child_copy_syscall.para3 = rand()%512;
 						
-							case 1:
-							//sys_chmod
+						break;
+						
+					case 1:
+						//sys_chmod
+						child_copy_syscall.para1 =(unsigned long) Pool->dirs_pool[rand()%1000];
+						if(rand()%2)
+						{
+							child_copy_syscall.para2 = Pool->mode_pool[rand()%27];
+						}
+						else
+						{
+							child_copy_syscall.para2 = (unsigned int)rand();
+						}
+						break;
+				
+					default:
+						fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");	
+					}
+						
+					/*******************************************/
+					/**********************log()****************/
+					/*******************************************/
+						
+					switch(index_chosen_syscall)
+					{
+					case 0:
+						/* sys_read */
+						if (child_copy_syscall.para1) //skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
+						{
 							if(flag_log)
-									fprintf(child_log[i],"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
-								fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
-							break;
-						
-							default:
-							fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
-						
-						
+								fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+							fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2,(int) child_copy_syscall.para3);
 						}
+							
+						break;
 						
-						/*******************************************/
-						/******************syscall()****************/
-						/*******************************************/
+					case 1:
+						/* sys_chmod */
+						if(flag_log)
+							fprintf(child_log[i],"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+						fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+						break;
 						
-						int ret = 0;
+					default:
+						fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
+					}
 						
-						switch(index_chosen_syscall)
+					/*******************************************/
+					/******************syscall()****************/
+					/*******************************************/
+						
+					int ret = 0;
+						
+					switch(index_chosen_syscall)
+					{
+					case 0:
+						//sys_read
+						//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
+							
+						if (child_copy_syscall.para1)
 						{
-							case 0:
-							//sys_read
-							//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
-							
-							if (child_copy_syscall.para1)
-							{
-								ret = syscall(child_copy_syscall.entrypoint,
-											child_copy_syscall.para1,
-											child_copy_syscall.para2,
-											child_copy_syscall.para3);
-		
-								if (ret == -1)
-								{
-									//int errsv = errno;
-									if(flag_log)
-										fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
-								}else 
-								{
-									if(flag_log)
-										fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(),(char *) child_copy_syscall.para2 );
-									fprintf(stdout, "child = %d sys_read success \n", getpid());
-								}
-							}
-							break;
-						
-							case 1:
-							//sys_chmod
-							
-							ret = syscall(child_copy_syscall.entrypoint,
-											child_copy_syscall.para1,
-											child_copy_syscall.para2);
+							ret = syscall(child_copy_syscall.entrypoint, child_copy_syscall.para1,
+									child_copy_syscall.para2, child_copy_syscall.para3);
 		
 							if (ret == -1)
 							{
 								//int errsv = errno;
 								if(flag_log)
-									fprintf(child_log[i], "child = %d sys_chmod failed with errno = %d\n", getpid(), errno);
-								fprintf(stdout, "child = %d sys_chmod failed with errno = %d\n", getpid(), errno);
-							}else 
+									fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
+								fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
+							}
+							else 
 							{
 								if(flag_log)
-									fprintf(child_log[i], "child = %d sys_chmod success \n", getpid() );
-								fprintf(stdout, "child = %d sys_chmod success \n", getpid());
-						
-						
-							break;
-						
-							default:
-							fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
-						
-						
+									fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(),(char *) child_copy_syscall.para2 );
+								fprintf(stdout, "child = %d sys_read success \n", getpid());
 							}
-
 						}
-
+						break;
+						
+					case 1:
+						//sys_chmod
+							
+						ret = syscall(child_copy_syscall.entrypoint, child_copy_syscall.para1,
+								child_copy_syscall.para2);
+		
+						if (ret == -1)
+						{
+							//int errsv = errno;
+							if(flag_log)
+								fprintf(child_log[i], "child = %d sys_chmod failed with errno = %d\n", getpid(), errno);
+							fprintf(stdout, "child = %d sys_chmod failed with errno = %d\n", getpid(), errno);
+						}
+						else 
+						{
+							if(flag_log)
+								fprintf(child_log[i], "child = %d sys_chmod success \n", getpid() );
+							fprintf(stdout, "child = %d sys_chmod success \n", getpid());
+						}
+						break;
+						
+						
+					default:
+						fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
 					}
 					return 0;
-				
 				}
 			}
-			else // fork failed
-			{
-				printf("\n Forkchild = %d fork failed, quitting!!!!!!\n", i);
-				return 1;
-			}
+		}
+		else // fork failed
+		{
+			printf("\n Forkchild = %d fork failed, quitting!!!!!!\n", i);
+			return 1;
+		}
 	
 	}
 
