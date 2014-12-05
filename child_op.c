@@ -15,8 +15,9 @@
 #include "generator.h"
 #include "syscalls.h"
 
-void child_op()
+void child_op(struct para_pool *Pool, int flag_log, struct fuzz_sys_call fuzz_sys_call_table[], int i) // i is the index of the forked child
 {
+	/* after fork(), child will reinit seed to 0 */
 	srand(time(NULL));
 						
 	while(1)
