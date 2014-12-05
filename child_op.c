@@ -34,32 +34,32 @@ struct fuzz_sys_call* rand_para(struct para_pool *Pool, struct fuzz_sys_call fuz
 	{
 	case 0:
 		//sys_read
-		child_copy_syscall.para1 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
+		child_copy_syscall->para1 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
 
 		if (rand() % 2)
 		{
 			char tmp[32];
-			child_copy_syscall.para2 = (unsigned long)tmp;
+			child_copy_syscall->para2 = (unsigned long)tmp;
 		}
 		else
 		{
-			child_copy_syscall.para2 = (unsigned long)rand();
+			child_copy_syscall->para2 = (unsigned long)rand();
 		}
 
-		child_copy_syscall.para3 = rand() % 512;
+		child_copy_syscall->para3 = rand() % 512;
 
 		break;
 
 	case 1:
 		//sys_chmod
-		child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % 1000];
+		child_copy_syscall->para1 = (unsigned long)Pool->dirs_pool[rand() % 1000];
 		if (rand() % 2)
 		{
-			child_copy_syscall.para2 = Pool->mode_pool[rand() % 27];
+			child_copy_syscall->para2 = Pool->mode_pool[rand() % 27];
 		}
 		else
 		{
-			child_copy_syscall.para2 = (unsigned int)rand();
+			child_copy_syscall->para2 = (unsigned int)rand();
 		}
 
 		break;
@@ -73,23 +73,23 @@ struct fuzz_sys_call* rand_para(struct para_pool *Pool, struct fuzz_sys_call fuz
 
 
 /* Log file operations */
-void log_file(struct fuzz_sys_call *child_copy_syscall, int flag_log, int i)
+void log_file(struct fuzz_sys_call *child_copy_syscall, int index_chosen_syscall, int flag_log, int i)
 {
 	switch (index_chosen_syscall)
 	{
 	case 0:
 		/* sys_read */
-		if (child_copy_syscall.para1) //skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
+		if (child_copy_syscall->para1) //skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
 		{
 			if (flag_log)
 				fprintf(child_log[i], "child = %d calling sys_read(%d,%x,%d)\n",
-				getpid(), (int)child_copy_syscall.para1,
-				(unsigned int)child_copy_syscall.para2,
-				(int)child_copy_syscall.para3);
+				getpid(), (int)child_copy_syscall->para1,
+				(unsigned int)child_copy_syscall->para2,
+				(int)child_copy_syscall->para3);
 			fprintf(stdout, "child = %d calling sys_read(%d,%x,%d)\n",
-				getpid(), (int)child_copy_syscall.para1,
-				(unsigned int)child_copy_syscall.para2,
-				(int)child_copy_syscall.para3);
+				getpid(), (int)child_copy_syscall->para1,
+				(unsigned int)child_copy_syscall->para2,
+				(int)child_copy_syscall->para3);
 		}
 
 		break;
@@ -98,11 +98,11 @@ void log_file(struct fuzz_sys_call *child_copy_syscall, int flag_log, int i)
 		/* sys_chmod */
 		if (flag_log)
 			fprintf(child_log[i], "child = %d calling sys_chmod(%s,%o)\n",
-			getpid(), (char*)child_copy_syscall.para1,
-			(unsigned int)child_copy_syscall.para2);
+			getpid(), (char*)child_copy_syscall->para1,
+			(unsigned int)child_copy_syscall->para2);
 		fprintf(stdout, "child = %d calling sys_chmod(%s,%o)\n",
-			getpid(), (char*)child_copy_syscall.para1,
-			(unsigned int)child_copy_syscall.para2);
+			getpid(), (char*)child_copy_syscall->para1,
+			(unsigned int)child_copy_syscall->para2);
 		break;
 
 	default:
@@ -114,7 +114,7 @@ void log_file(struct fuzz_sys_call *child_copy_syscall, int flag_log, int i)
 
 //void my_syscall()
 
-void child_op(struct para_pool *Pool, int flag_log, struct fuzz_sys_call fuzz_sys_call_table[], int i) // i is the index of the forked child
+void child_op(struct para_pool *Pool, int flag_log, FILE * child_log[], struct fuzz_sys_call fuzz_sys_call_table[], int i) // i is the index of the forked child
 {
 	/* after fork(), child will reinit seed to 0 */
 	srand(time(NULL));
@@ -150,10 +150,10 @@ void child_op(struct para_pool *Pool, int flag_log, struct fuzz_sys_call fuzz_sy
 			//sys_read
 			//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
 							
-			if (child_copy_syscall.para1)
+			if (child_copy_syscall->para1)
 			{
-				ret = syscall(child_copy_syscall.entrypoint, child_copy_syscall.para1,
-									child_copy_syscall.para2, child_copy_syscall.para3);
+				ret = syscall(child_copy_syscall->entrypoint, child_copy_syscall->para1,
+									child_copy_syscall->para2, child_copy_syscall->para3);
 		
 				if (ret == -1)
 				{
@@ -165,7 +165,7 @@ void child_op(struct para_pool *Pool, int flag_log, struct fuzz_sys_call fuzz_sy
 				else 
 				{
 					if(flag_log)
-						fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(),(char *) child_copy_syscall.para2);
+						fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(),(char *) child_copy_syscall->para2);
 					fprintf(stdout, "child = %d sys_read success \n", getpid());
 				}
 			}
@@ -175,8 +175,8 @@ void child_op(struct para_pool *Pool, int flag_log, struct fuzz_sys_call fuzz_sy
 		case 1:
 			//sys_chmod
 							
-			ret = syscall(child_copy_syscall.entrypoint, child_copy_syscall.para1,
-					child_copy_syscall.para2);
+			ret = syscall(child_copy_syscall->entrypoint, child_copy_syscall->para1,
+					child_copy_syscall->para2);
 		
 			if (ret == -1)
 			{
@@ -199,5 +199,8 @@ void child_op(struct para_pool *Pool, int flag_log, struct fuzz_sys_call fuzz_sy
 			fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
 		}
 	}
+
+	/* Free the child's table */
+	free(child_copy_syscall);
 
 }

@@ -121,7 +121,7 @@ int main (int argc, char *argv[])
 			if(childPID[i] == 0) // child process
 			{
 				/* Call child_po() to perform child's operation */
-				child_op(Pool, flag_log, fhile_number, fuzz_sys_call_table, i);
+				child_op(Pool, flag_log, child_log, fhile_number, fuzz_sys_call_table, i);
 
 				return 0;
 			}
