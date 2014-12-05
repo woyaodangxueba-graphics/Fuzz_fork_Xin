@@ -137,13 +137,13 @@ int main (int argc, char *argv[])
 						
 						struct fuzz_sys_call child_copy_syscall = {
 						
-							.entrypoint = fuzz_sys_call_table[index_chosen_syscall].entrypoint;
-							.para1 = fuzz_sys_call_table[index_chosen_syscall].para1;
-							.para2 = fuzz_sys_call_table[index_chosen_syscall].para2;
-							.para3 = fuzz_sys_call_table[index_chosen_syscall].para3;
-							.para4 = fuzz_sys_call_table[index_chosen_syscall].para4;
-							.para5 = fuzz_sys_call_table[index_chosen_syscall].para5;
-							.para6 = fuzz_sys_call_table[index_chosen_syscall].para6;
+							.entrypoint = fuzz_sys_call_table[index_chosen_syscall].entrypoint,
+							.para1 = fuzz_sys_call_table[index_chosen_syscall].para1,
+							.para2 = fuzz_sys_call_table[index_chosen_syscall].para2,
+							.para3 = fuzz_sys_call_table[index_chosen_syscall].para3,
+							.para4 = fuzz_sys_call_table[index_chosen_syscall].para4,
+							.para5 = fuzz_sys_call_table[index_chosen_syscall].para5,
+							.para6 = fuzz_sys_call_table[index_chosen_syscall].para6
 						
 						};
 						
@@ -169,7 +169,7 @@ int main (int argc, char *argv[])
 						
 							case 1:
 							//sys_chmod
-							child_copy_syscall.para1 = Pool->dirs_pool[rand()%1000];
+							child_copy_syscall.para1 =(unsigned long) Pool->dirs_pool[rand()%1000];
 							if(rand()%2)
 								{
 									child_copy_syscall.para2 = Pool->mode_pool[rand()%27];
@@ -198,8 +198,8 @@ int main (int argc, char *argv[])
 							//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
 								{
 								if(flag_log)
-									fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, child_copy_syscall.para3);
-								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, child_copy_syscall.para3);
+									fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2,(int) child_copy_syscall.para3);
 								}
 							
 							break;
@@ -207,8 +207,8 @@ int main (int argc, char *argv[])
 							case 1:
 							//sys_chmod
 							if(flag_log)
-									fprintf(child_log[i],"child = %d calling sys_chmod(%s,%o)\n", getpid(), child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
-								fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+									fprintf(child_log[i],"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+								fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 							break;
 						
 							default:
@@ -245,7 +245,7 @@ int main (int argc, char *argv[])
 								}else 
 								{
 									if(flag_log)
-										fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), child_copy_syscall.para2 );
+										fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(),(char *) child_copy_syscall.para2 );
 									fprintf(stdout, "child = %d sys_read success \n", getpid());
 								}
 							}
@@ -284,15 +284,16 @@ int main (int argc, char *argv[])
 					}
 					return 0;
 				
+				}
 			}
 			else // fork failed
 			{
-				printf("\n Fork failed, quitting!!!!!!\n");
+				printf("\n Forkchild = %d fork failed, quitting!!!!!!\n", i);
 				return 1;
 			}
 	
 	}
-}
+
 
 	/*******************************************/
 	/******************watchdog()***************/
@@ -340,13 +341,13 @@ int main (int argc, char *argv[])
 						
 								struct fuzz_sys_call child_copy_syscall = {
 						
-									.entrypoint = fuzz_sys_call_table[index_chosen_syscall].entrypoint;
-									.para1 = fuzz_sys_call_table[index_chosen_syscall].para1;
-									.para2 = fuzz_sys_call_table[index_chosen_syscall].para2;
-									.para3 = fuzz_sys_call_table[index_chosen_syscall].para3;
-									.para4 = fuzz_sys_call_table[index_chosen_syscall].para4;
-									.para5 = fuzz_sys_call_table[index_chosen_syscall].para5;
-									.para6 = fuzz_sys_call_table[index_chosen_syscall].para6;
+									.entrypoint = fuzz_sys_call_table[index_chosen_syscall].entrypoint,
+									.para1 = fuzz_sys_call_table[index_chosen_syscall].para1,
+									.para2 = fuzz_sys_call_table[index_chosen_syscall].para2,
+									.para3 = fuzz_sys_call_table[index_chosen_syscall].para3,
+									.para4 = fuzz_sys_call_table[index_chosen_syscall].para4,
+									.para5 = fuzz_sys_call_table[index_chosen_syscall].para5,
+									.para6 = fuzz_sys_call_table[index_chosen_syscall].para6
 						
 								};
 						
@@ -372,7 +373,7 @@ int main (int argc, char *argv[])
 						
 									case 1:
 									//sys_chmod
-									child_copy_syscall.para1 = Pool->dirs_pool[rand()%1000];
+									child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand()%1000];
 									if(rand()%2)
 										{
 											child_copy_syscall.para2 = Pool->mode_pool[rand()%27];
@@ -401,8 +402,8 @@ int main (int argc, char *argv[])
 									//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
 										{
 										if(flag_log)
-											fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, child_copy_syscall.para3);
-										fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, child_copy_syscall.para3);
+											fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+										fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
 										}
 							
 									break;
@@ -410,8 +411,8 @@ int main (int argc, char *argv[])
 									case 1:
 									//sys_chmod
 									if(flag_log)
-											fprintf(child_log[i],"child = %d calling sys_chmod(%s,%o)\n", getpid(), child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
-										fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+											fprintf(child_log[i],"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+										fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 									break;
 						
 									default:
@@ -448,7 +449,7 @@ int main (int argc, char *argv[])
 										}else 
 										{
 											if(flag_log)
-												fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), child_copy_syscall.para2 );
+												fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), (char *)child_copy_syscall.para2 );
 											fprintf(stdout, "child = %d sys_read success \n", getpid());
 										}
 									}
@@ -487,19 +488,20 @@ int main (int argc, char *argv[])
 							}
 							return 0;
 				
+						}
 					}
 					else // fork failed
 					{
-						printf("\n Fork failed, quitting!!!!!!\n");
+						printf("\n Respawn fork child = %d  failed, quitting!!!!!!\n", i);
 						return 1;
 					}
 	
 			}
 
 		  
-				}
+			}
 		}
-	}
+
 	
 	
 
