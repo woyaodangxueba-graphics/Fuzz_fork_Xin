@@ -205,6 +205,11 @@ int main (int argc, char *argv[])
 								child_copy_syscall.para1 = Pool->dirs_pool[rand() % (cur_dir_num + 100)];
 
 								break;
+
+							case 4: /* sys_fchidr() */
+								child_copy_syscall.para1 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
+
+								break;
 						
 							default:
 							fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
@@ -249,14 +254,21 @@ int main (int argc, char *argv[])
 
 								break;
 
-							case 3: /* sys_chdir() */
+							case 3: /* sys_chdir(const char* dir) */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_chdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
 								fprintf(stdout, "child = %d calling sys_chdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
 								break;
+
+							case 4: /* sys_fchdir(ind fd)  */
+								if (flag_log)
+									fprintf(child_log[i], "child = %d calling sys_chdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
+								fprintf(stdout, "child = %d calling sys_chdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
+
+								break;
 						
 							default:
-							fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
+								fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
 						
 						
 						}
@@ -360,6 +372,25 @@ int main (int argc, char *argv[])
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_chdir success \n", getpid());
 									fprintf(stdout, "child = %d sys_chdir success \n", getpid());
+								}
+
+								break;
+
+							case 4: /* sys_fchdir(int fd) */
+								ret = syscall(child_copy_syscall.entrypoint, child_copy_syscall.para1);
+
+								if (ret == -1)
+								{
+									//int errsv = errno;
+									if (flag_log)
+										fprintf(child_log[i], "child = %d sys_fchdir failed with errno = %d\n", getpid(), errno);
+									fprintf(stdout, "child = %d sys_fdir failed with errno = %d\n", getpid(), errno);
+								}
+								else
+								{
+									if (flag_log)
+										fprintf(child_log[i], "child = %d sys_fchdir success \n", getpid());
+									fprintf(stdout, "child = %d sys_fchdir success \n", getpid());
 								}
 
 								break;
@@ -499,6 +530,11 @@ int main (int argc, char *argv[])
 										child_copy_syscall.para1 = Pool->dirs_pool[rand() % (cur_dir_num + 100)];
 
 										break;
+
+									case 4: /* sys_fchidr() */
+										child_copy_syscall.para1 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
+
+										break;
 						
 									default:
 									fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
@@ -547,6 +583,14 @@ int main (int argc, char *argv[])
 										if (flag_log)
 											fprintf(child_log[i], "child = %d calling sys_chdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
 										fprintf(stdout, "child = %d calling sys_chdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
+
+										break;
+
+									case 4: /* sys_fchdir(ind fd)  */
+										if (flag_log)
+											fprintf(child_log[i], "child = %d calling sys_fchdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
+										fprintf(stdout, "child = %d calling sys_fchdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
+
 										break;
 						
 									default:
@@ -653,6 +697,25 @@ int main (int argc, char *argv[])
 											if (flag_log)
 												fprintf(child_log[i], "child = %d sys_chdir success \n", getpid());
 											fprintf(stdout, "child = %d sys_chdir success \n", getpid());
+										}
+
+										break;
+
+									case 4: /* sys_fchdir(int fd) */
+										ret = syscall(child_copy_syscall.entrypoint, child_copy_syscall.para1);
+
+										if (ret == -1)
+										{
+											//int errsv = errno;
+											if (flag_log)
+												fprintf(child_log[i], "child = %d sys_fchdir failed with errno = %d\n", getpid(), errno);
+											fprintf(stdout, "child = %d sys_fdir failed with errno = %d\n", getpid(), errno);
+										}
+										else
+										{
+											if (flag_log)
+												fprintf(child_log[i], "child = %d sys_fchdir success \n", getpid());
+											fprintf(stdout, "child = %d sys_fchdir success \n", getpid());
 										}
 
 										break;
