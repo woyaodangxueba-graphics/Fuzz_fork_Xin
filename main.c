@@ -227,6 +227,12 @@ int main (int argc, char *argv[])
 								child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % 1000];
 								
 								break;
+
+							case 7: /* sys_rename */
+								child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % 1000];
+								child_copy_syscall.para2 = (unsigned long)Pool->dirs_pool[rand() % 1000];
+
+								break;
 						
 							default:
 							fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
@@ -301,6 +307,12 @@ int main (int argc, char *argv[])
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_rmdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
 								fprintf(stdout, "child = %d calling sys_rmdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
+								break;
+
+							case 7: /* sys_rename  */
+								if (flag_log)
+									fprintf(child_log[i], "child = %d calling sys_rename(%s, %s)\n", getpid(), (char*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
+								fprintf(stdout, "child = %d calling sys_rename(%s, %s)\n", getpid(), (char*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
 								break;
 						
 							default:
@@ -458,7 +470,7 @@ int main (int argc, char *argv[])
 								//sys_chmod
 
 								ret = syscall(child_copy_syscall.entrypoint,
-									child_copy_syscall.para1,);
+									child_copy_syscall.para1);
 
 								if (ret == -1)
 								{
@@ -472,6 +484,28 @@ int main (int argc, char *argv[])
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_rmdir success \n", getpid());
 									fprintf(stdout, "child = %d sys_rmdir success \n", getpid());
+								}
+
+								break;
+
+							case 7:
+								//sys_rename
+
+								ret = syscall(child_copy_syscall.entrypoint,
+									child_copy_syscall.para1, child_copy_syscall.para2);
+
+								if (ret == -1)
+								{
+									//int errsv = errno;
+									if (flag_log)
+										fprintf(child_log[i], "child = %d sys_rename failed with errno = %d\n", getpid(), errno);
+									fprintf(stdout, "child = %d sys_rename failed with errno = %d\n", getpid(), errno);
+								}
+								else
+								{
+									if (flag_log)
+										fprintf(child_log[i], "child = %d sys_rename success \n", getpid());
+									fprintf(stdout, "child = %d sys_rename success \n", getpid());
 								}
 
 								break;
@@ -633,6 +667,12 @@ int main (int argc, char *argv[])
 										child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % 1000];
 
 										break;
+
+									case 7: /* sys_rename */
+										child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % 1000];
+										child_copy_syscall.para2 = (unsigned long)Pool->dirs_pool[rand() % 1000];
+
+										break;
 						
 									default:
 									fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
@@ -701,6 +741,12 @@ int main (int argc, char *argv[])
 										if (flag_log)
 											fprintf(child_log[i], "child = %d calling sys_rmdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
 										fprintf(stdout, "child = %d calling sys_rmdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
+										break;
+
+									case 7: /* sys_rename  */
+										if (flag_log)
+											fprintf(child_log[i], "child = %d calling sys_rename(%s, %s)\n", getpid(), (char*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
+										fprintf(stdout, "child = %d calling sys_rename(%s, %s)\n", getpid(), (char*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
 										break;
 						
 									default:
@@ -871,6 +917,28 @@ int main (int argc, char *argv[])
 											if (flag_log)
 												fprintf(child_log[i], "child = %d sys_rmdir success \n", getpid());
 											fprintf(stdout, "child = %d sys_rmdir success \n", getpid());
+										}
+
+										break;
+
+									case 7:
+										//sys_rename
+
+										ret = syscall(child_copy_syscall.entrypoint,
+											child_copy_syscall.para1, child_copy_syscall.para2);
+
+										if (ret == -1)
+										{
+											//int errsv = errno;
+											if (flag_log)
+												fprintf(child_log[i], "child = %d sys_rename failed with errno = %d\n", getpid(), errno);
+											fprintf(stdout, "child = %d sys_rename failed with errno = %d\n", getpid(), errno);
+										}
+										else
+										{
+											if (flag_log)
+												fprintf(child_log[i], "child = %d sys_rename success \n", getpid());
+											fprintf(stdout, "child = %d sys_rename success \n", getpid());
 										}
 
 										break;
