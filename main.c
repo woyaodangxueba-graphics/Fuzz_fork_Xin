@@ -237,6 +237,29 @@ int main (int argc, char *argv[])
 							case 8:
 								time_t *tmp = (time_t*)malloc(sizeof(time_t));
 								child_copy_syscall.para1 = (unsigned long)tmp;
+
+								break;
+
+							case 9:
+								child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % 1000];
+
+								if (rand() % 2)
+								{
+									char tmp[32];
+
+									for (int i; i < 32; i++)   // To genterate ramdom content in the buffer.
+										tmp[i] = (char)rand() % 128;
+
+									child_copy_syscall.para2 = (unsigned long)tmp;
+								}
+								else
+								{
+									child_copy_syscall.para2 = (unsigned long)rand();
+								}
+
+								child_copy_syscall.para3 = (unsigned long)rand() % 512;
+
+								break;
 						
 							default:
 							fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
@@ -325,6 +348,12 @@ int main (int argc, char *argv[])
 								fprintf(stdout, "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
 								break;
 						
+							case 9: /* sys_rename  */
+								if (flag_log)
+									fprintf(child_log[i], "child = %d calling sys_time(%s, %p, %d)\n", getpid(), (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1);
+								fprintf(stdout, "child = %d calling sys_time(%s, %p, %d)\n", getpid(), (time_t*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
+								break;
+
 							default:
 								fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
 						
@@ -544,6 +573,28 @@ int main (int argc, char *argv[])
 
 								break;
 
+							case 9:
+								//sys_rename
+
+								ret = syscall(child_copy_syscall.entrypoint,
+									child_copy_syscall.para1, child_copy_syscall.para2, child_copy_syscall.para3);
+
+								if (ret == -1)
+								{
+									//int errsv = errno;
+									if (flag_log)
+										fprintf(child_log[i], "child = %d sys_readlink failed with errno = %d\n", getpid(), errno);
+									fprintf(stdout, "child = %d sys_readlink failed with errno = %d\n", getpid(), errno);
+								}
+								else
+								{
+									if (flag_log)
+										fprintf(child_log[i], "child = %d sys_readlink success \n", getpid());
+									fprintf(stdout, "child = %d sys_readlink success \n", getpid());
+								}
+
+								break;
+
 							default:
 								fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
 							}
@@ -711,6 +762,30 @@ int main (int argc, char *argv[])
 									case 8:
 										time_t *tmp = (time_t*)malloc(sizeof(time_t));
 										child_copy_syscall.para1 = (unsigned long)tmp;
+
+										break;
+
+									case 9:
+										child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % 1000];
+
+										if (rand() % 2)
+										{
+											char tmp[32];
+
+											for (int i; i < 32; i++)   // To genterate ramdom content in the buffer.
+												tmp[i] = (char)rand() % 128;
+
+											child_copy_syscall.para2 = (unsigned long)tmp;
+										}
+										else
+										{
+											child_copy_syscall.para2 = (unsigned long)rand();
+										}
+
+										child_copy_syscall.para3 = (unsigned long)rand() % 512;
+
+										break;
+
 						
 									default:
 									fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
@@ -791,6 +866,12 @@ int main (int argc, char *argv[])
 										if (flag_log)
 											fprintf(child_log[i], "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
 										fprintf(stdout, "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
+										break;
+
+									case 9: /* sys_rename  */
+										if (flag_log)
+											fprintf(child_log[i], "child = %d calling sys_time(%s, %p, %d)\n", getpid(), (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1);
+										fprintf(stdout, "child = %d calling sys_time(%s, %p, %d)\n", getpid(), (time_t*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
 										break;
 						
 									default:
@@ -1007,6 +1088,28 @@ int main (int argc, char *argv[])
 											if (flag_log)
 												fprintf(child_log[i], "child = %d sys_time success \n", getpid());
 											fprintf(stdout, "child = %d sys_time success \n", getpid());
+										}
+
+										break;
+
+									case 9:
+										//sys_rename
+
+										ret = syscall(child_copy_syscall.entrypoint,
+											child_copy_syscall.para1, child_copy_syscall.para2, child_copy_syscall.para3);
+
+										if (ret == -1)
+										{
+											//int errsv = errno;
+											if (flag_log)
+												fprintf(child_log[i], "child = %d sys_readlink failed with errno = %d\n", getpid(), errno);
+											fprintf(stdout, "child = %d sys_readlink failed with errno = %d\n", getpid(), errno);
+										}
+										else
+										{
+											if (flag_log)
+												fprintf(child_log[i], "child = %d sys_readlink success \n", getpid());
+											fprintf(stdout, "child = %d sys_readlink success \n", getpid());
 										}
 
 										break;
