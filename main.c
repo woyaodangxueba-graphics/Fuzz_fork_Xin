@@ -17,6 +17,7 @@
 #include "syscalls.h"
 
 #define CHILD_NO 4
+#define SYSCALL_NUM 3
 
 int flag_log = 0;
 
@@ -179,6 +180,28 @@ int main (int argc, char *argv[])
 									child_copy_syscall.para2 = (unsigned int)rand();
 								}
 							break;
+
+							case 2:
+								//sys_write
+								child_copy_syscall.para1 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
+
+								if (rand() % 2)
+								{
+									char tmp[32];
+
+									for (int i; i < 32; i++)   // To genterate ramdom content in the buffer.
+										tmp[i] = (char)rand() % 128;
+
+									child_copy_syscall.para2 = (unsigned long)tmp;
+								}
+								else
+								{
+									child_copy_syscall.para2 = (unsigned long)rand();
+								}
+
+								child_copy_syscall.para3 = rand() % 512;
+
+								break;
 						
 							default:
 							fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
@@ -210,6 +233,18 @@ int main (int argc, char *argv[])
 									fprintf(child_log[i],"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 								fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 							break;
+
+							case 2:
+								//sys_read
+								if (child_copy_syscall.para1)
+									//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
+								{
+									if (flag_log)
+										fprintf(child_log[i], "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+									fprintf(stdout, "child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+								}
+
+								break;
 						
 							default:
 							fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
@@ -272,6 +307,33 @@ int main (int argc, char *argv[])
 						
 						
 							break;
+
+							case 2:
+								//sys_read
+								//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
+
+								if (child_copy_syscall.para1)
+								{
+									ret = syscall(child_copy_syscall.entrypoint,
+										child_copy_syscall.para1,
+										child_copy_syscall.para2,
+										child_copy_syscall.para3);
+
+									if (ret == -1)
+									{
+										//int errsv = errno;
+										if (flag_log)
+											fprintf(child_log[i], "child = %d sys_write failed with errno = %d\n", getpid(), errno);
+										fprintf(stdout, "child = %d sys_write failed with errno = %d\n", getpid(), errno);
+									}
+									else
+									{
+										if (flag_log)
+											fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), (char *)child_copy_syscall.para2);
+										fprintf(stdout, "child = %d sys_read success \n", getpid());
+									}
+								}
+								break;
 						
 							default:
 							fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
@@ -333,7 +395,7 @@ int main (int argc, char *argv[])
 								/**************choose syscall()*************/
 								/*******************************************/
 						
-								int index_chosen_syscall = rand()%2; // 2 is syscall numbers this draft supports right now.
+									int index_chosen_syscall = rand() % SYSCALL_NUM; // SYSCALL_NUM is syscall numbers this draft supports right now.
 
 								/*******************************************/
 								/*****************rand para()***************/
@@ -383,6 +445,28 @@ int main (int argc, char *argv[])
 											child_copy_syscall.para2 = (unsigned int)rand();
 										}
 									break;
+
+									case 2:
+										//sys_write
+										child_copy_syscall.para1 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
+
+										if (rand() % 2)
+										{
+											char tmp[32];
+
+											for (int i; i < 32; i++)   // To genterate ramdom content in the buffer.
+												tmp[i] = (char)rand() % 128; 
+
+											child_copy_syscall.para2 = (unsigned long)tmp;
+										}
+										else
+										{
+											child_copy_syscall.para2 = (unsigned long)rand();
+										}
+
+										child_copy_syscall.para3 = rand() % 512;
+
+										break;
 						
 									default:
 									fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
@@ -413,6 +497,18 @@ int main (int argc, char *argv[])
 									if(flag_log)
 											fprintf(child_log[i],"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 										fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+									break;
+
+									case 2:
+										//sys_read
+										if (child_copy_syscall.para1)
+											//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
+										{
+											if (flag_log)
+												fprintf(child_log[i], "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+											fprintf(stdout, "child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+										}
+
 									break;
 						
 									default:
@@ -476,6 +572,33 @@ int main (int argc, char *argv[])
 						
 						
 									break;
+
+									case 2:
+										//sys_read
+										//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
+
+										if (child_copy_syscall.para1)
+										{
+											ret = syscall(child_copy_syscall.entrypoint,
+												child_copy_syscall.para1,
+												child_copy_syscall.para2,
+												child_copy_syscall.para3);
+
+											if (ret == -1)
+											{
+												//int errsv = errno;
+												if (flag_log)
+													fprintf(child_log[i], "child = %d sys_write failed with errno = %d\n", getpid(), errno);
+												fprintf(stdout, "child = %d sys_write failed with errno = %d\n", getpid(), errno);
+											}
+											else
+											{
+												if (flag_log)
+													fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), (char *)child_copy_syscall.para2);
+												fprintf(stdout, "child = %d sys_read success \n", getpid());
+											}
+										}
+										break;
 						
 									default:
 									fprintf(stderr," Something is terribly WRONG! Do something to fix your log switch!\n");
