@@ -93,5 +93,24 @@ struct fuzz_sys_call fuzz_sys_call_table[] = {
 		.para6 = (unsigned long)NULL
 	},	//sys_readlink 85
 
+	{
+		.entrypoint = 94,
+		.para1 = (unsigned long)NULL,
+		.para2 = (unsigned long)NULL,
+		.para3 = (unsigned long)NULL,
+		.para4 = (unsigned long)NULL,
+		.para5 = (unsigned long)NULL,
+		.para6 = (unsigned long)NULL
+	},	//sys_readlink 94
+
+	{
+		.entrypoint = 36,
+		.para1 = (unsigned long)NULL,
+		.para2 = (unsigned long)NULL,
+		.para3 = (unsigned long)NULL,
+		.para4 = (unsigned long)NULL,
+		.para5 = (unsigned long)NULL,
+		.para6 = (unsigned long)NULL
+	},	//sys_sync 36
 
 };
