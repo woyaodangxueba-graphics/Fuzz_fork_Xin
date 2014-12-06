@@ -130,7 +130,7 @@ int main (int argc, char *argv[])
 						/**************choose syscall()*************/
 						/*******************************************/
 						
-						int index_chosen_syscall = rand()%2; // 2 is syscall numbers this draft supports right now.
+						int index_chosen_syscall = rand()%SYSCALL_NUM; // SYSCALL_NUM is syscall numbers this draft supports right now.
 
 						/*******************************************/
 						/*****************rand para()***************/
@@ -218,7 +218,7 @@ int main (int argc, char *argv[])
 							case 0:
 							//sys_read
 							if (child_copy_syscall.para1)
-							//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
+							//skip para1 = 0 , which is indeed fd =0. Reading from keyboard is annoying. 
 								{
 								if(flag_log)
 									fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
@@ -235,13 +235,13 @@ int main (int argc, char *argv[])
 							break;
 
 							case 2:
-								//sys_read
+								//sys_write
 								if (child_copy_syscall.para1)
-									//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
+									//skip para1 = 0 , which is indeed fd =0. Reading from keyboard is annoying. 
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
-									fprintf(stdout, "child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+									fprintf(stdout, "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
 								}
 
 								break;
@@ -309,7 +309,7 @@ int main (int argc, char *argv[])
 							break;
 
 							case 2:
-								//sys_read
+								//sys_write
 								//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
 
 								if (child_copy_syscall.para1)
@@ -329,8 +329,8 @@ int main (int argc, char *argv[])
 									else
 									{
 										if (flag_log)
-											fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), (char *)child_copy_syscall.para2);
-										fprintf(stdout, "child = %d sys_read success \n", getpid());
+											fprintf(child_log[i], "child = %d sys_write success with %s\n", getpid(), (char *)child_copy_syscall.para2);
+										fprintf(stdout, "child = %d sys_write success \n", getpid());
 									}
 								}
 								break;
@@ -500,13 +500,13 @@ int main (int argc, char *argv[])
 									break;
 
 									case 2:
-										//sys_read
+										//sys_write
 										if (child_copy_syscall.para1)
 											//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
 										{
 											if (flag_log)
 												fprintf(child_log[i], "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
-											fprintf(stdout, "child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+											fprintf(stdout, "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
 										}
 
 									break;
@@ -574,7 +574,7 @@ int main (int argc, char *argv[])
 									break;
 
 									case 2:
-										//sys_read
+										//sys_write
 										//skip para1 = 0 , which is inded fd =0. Reading from keyboard is annoying. 
 
 										if (child_copy_syscall.para1)
@@ -594,8 +594,8 @@ int main (int argc, char *argv[])
 											else
 											{
 												if (flag_log)
-													fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(), (char *)child_copy_syscall.para2);
-												fprintf(stdout, "child = %d sys_read success \n", getpid());
+													fprintf(child_log[i], "child = %d sys_write success with %s\n", getpid(), (char *)child_copy_syscall.para2);
+												fprintf(stdout, "child = %d sys_write success \n", getpid());
 											}
 										}
 										break;
