@@ -119,8 +119,6 @@ int main (int argc, char *argv[])
 			{
 				if(childPID[i] == 0) // child process
 				{
-						
-						
 						//after fork(), child will reinit seed to 0
 						srand(time(NULL));
 						
