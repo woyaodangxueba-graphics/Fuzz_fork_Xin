@@ -210,6 +210,18 @@ int main (int argc, char *argv[])
 								child_copy_syscall.para1 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
 
 								break;
+
+							case 5: /* sys_mkdir */
+								child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % 1000];
+								if (rand() % 2)
+								{
+									child_copy_syscall.para2 = Pool->mode_pool[rand() % 27];
+								}
+								else
+								{
+									child_copy_syscall.para2 = (unsigned int)rand();
+								}
+								break;
 						
 							default:
 							fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
@@ -265,6 +277,19 @@ int main (int argc, char *argv[])
 									fprintf(child_log[i], "child = %d calling sys_chdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
 								fprintf(stdout, "child = %d calling sys_chdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
 
+								break;
+
+							case 4: /* sys_fchdir(ind fd)  */
+								if (flag_log)
+									fprintf(child_log[i], "child = %d calling sys_chdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
+								fprintf(stdout, "child = %d calling sys_chdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
+
+								break;
+
+							case 5: /* sys_mkdir  */
+								if (flag_log)
+									fprintf(child_log[i], "child = %d calling sys_mkdir(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+								fprintf(stdout, "child = %d calling sys_mkdir(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 								break;
 						
 							default:
@@ -391,6 +416,29 @@ int main (int argc, char *argv[])
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_fchdir success \n", getpid());
 									fprintf(stdout, "child = %d sys_fchdir success \n", getpid());
+								}
+
+								break;
+
+							case 5:
+								//sys_chmod
+
+								ret = syscall(child_copy_syscall.entrypoint,
+									child_copy_syscall.para1,
+									child_copy_syscall.para2);
+
+								if (ret == -1)
+								{
+									//int errsv = errno;
+									if (flag_log)
+										fprintf(child_log[i], "child = %d sys_mkdir failed with errno = %d\n", getpid(), errno);
+									fprintf(stdout, "child = %d sys_mkdir failed with errno = %d\n", getpid(), errno);
+								}
+								else
+								{
+									if (flag_log)
+										fprintf(child_log[i], "child = %d sys_mkdir success \n", getpid());
+									fprintf(stdout, "child = %d sys_mkdir success \n", getpid());
 								}
 
 								break;
@@ -535,6 +583,18 @@ int main (int argc, char *argv[])
 										child_copy_syscall.para1 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
 
 										break;
+
+									case 5: /* sys_mkdir */
+										child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % 1000];
+										if (rand() % 2)
+										{
+											child_copy_syscall.para2 = Pool->mode_pool[rand() % 27];
+										}
+										else
+										{
+											child_copy_syscall.para2 = (unsigned int)rand();
+										}
+										break;
 						
 									default:
 									fprintf(stderr," Something is terribly WRONG! Do something to fix your rand_para switch!\n");
@@ -591,6 +651,12 @@ int main (int argc, char *argv[])
 											fprintf(child_log[i], "child = %d calling sys_fchdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
 										fprintf(stdout, "child = %d calling sys_fchdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
 
+										break;
+
+									case 5: /* sys_mkdir  */
+										if (flag_log)
+											fprintf(child_log[i], "child = %d calling sys_mkdir(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+										fprintf(stdout, "child = %d calling sys_mkdir(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 										break;
 						
 									default:
@@ -716,6 +782,29 @@ int main (int argc, char *argv[])
 											if (flag_log)
 												fprintf(child_log[i], "child = %d sys_fchdir success \n", getpid());
 											fprintf(stdout, "child = %d sys_fchdir success \n", getpid());
+										}
+
+										break;
+
+									case 5:
+										//sys_chmod
+
+										ret = syscall(child_copy_syscall.entrypoint,
+											child_copy_syscall.para1,
+											child_copy_syscall.para2);
+
+										if (ret == -1)
+										{
+											//int errsv = errno;
+											if (flag_log)
+												fprintf(child_log[i], "child = %d sys_mkdir failed with errno = %d\n", getpid(), errno);
+											fprintf(stdout, "child = %d sys_mkdir failed with errno = %d\n", getpid(), errno);
+										}
+										else
+										{
+											if (flag_log)
+												fprintf(child_log[i], "child = %d sys_mkdir success \n", getpid());
+											fprintf(stdout, "child = %d sys_mkdir success \n", getpid());
 										}
 
 										break;
