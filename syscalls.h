@@ -41,7 +41,7 @@ struct fuzz_sys_call fuzz_sys_call_table[] = {
 		.para4 = (unsigned long)NULL,
 		.para5 = (unsigned long)NULL,
 		.para6 = (unsigned long)NULL
-	},	//sys_fchdir 12
+	},	//sys_fchdir 133
 
 	{
 		.entrypoint = 39,
@@ -64,13 +64,24 @@ struct fuzz_sys_call fuzz_sys_call_table[] = {
 	},	//sys_rmdir 40
 
 	{
-		.entrypoint = 302,
+		.entrypoint = 38,
 		.para1 = (unsigned long)NULL,
 		.para2 = (unsigned long)NULL,
 		.para3 = (unsigned long)NULL,
 		.para4 = (unsigned long)NULL,
 		.para5 = (unsigned long)NULL,
 		.para6 = (unsigned long)NULL
-	},	//sys_rename 302
+	},	//sys_rename 38
+
+	{
+		.entrypoint = 13,
+		.para1 = (unsigned long)NULL,
+		.para2 = (unsigned long)NULL,
+		.para3 = (unsigned long)NULL,
+		.para4 = (unsigned long)NULL,
+		.para5 = (unsigned long)NULL,
+		.para6 = (unsigned long)NULL
+	},	//sys_time 13; time_t is defined as long int.
+
 
 };
