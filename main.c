@@ -76,7 +76,7 @@ int main (int argc, char *argv[])
 	// loop over remaining fd[] and full them with random numbers
 	srand(time(NULL));
 	    
-	while (fd_index < files_number)
+	while (fd_index < files_number + 3 + 100)
 	{
 		Pool->fd_pool[fd_index] = rand();
 		fd_index++;
