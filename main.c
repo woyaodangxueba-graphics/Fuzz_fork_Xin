@@ -20,6 +20,7 @@
 #define SYSCALL_NUM 12
 
 int flag_log = 0;
+int flag_debug = 0;
 
 int main (int argc, char *argv[])
 {
@@ -31,6 +32,7 @@ int main (int argc, char *argv[])
     
     char *v = "-v";
     char *l = "-l";
+    char *d = "-d";//debug
     char *dir_path;
     
     for (int i = 1;i < argc;  )
@@ -44,6 +46,12 @@ int main (int argc, char *argv[])
 			flag_log = 1;
 			i++;
 			fprintf(stdout,"log mod activated.\n");
+		}
+		else if (strcmp(argv[i], d) == 0)
+		{
+			flag_log = 1;
+			i++;
+			fprintf(stdout,"debug mod activated.\n");
 		}
 		else{
 			fprintf(stderr,"invalid arguments.\n");
@@ -326,7 +334,7 @@ int main (int argc, char *argv[])
 								{
 								if(flag_log)
 									fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
-								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2,(int) child_copy_syscall.para3);
+								if(flag_debug) fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2,(int) child_copy_syscall.para3);
 								}
 							
 							break;
@@ -335,7 +343,7 @@ int main (int argc, char *argv[])
 							//sys_chmod
 							if(flag_log)
 									fprintf(child_log[i],"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
-								fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+								if(flag_debug) fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 							break;
 
 							case 2:
@@ -345,7 +353,7 @@ int main (int argc, char *argv[])
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
-									fprintf(stdout, "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+									if(flag_debug) fprintf(stdout, "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
 								}
 
 								break;
@@ -353,56 +361,56 @@ int main (int argc, char *argv[])
 							case 3: /* sys_chdir(const char* dir) */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_chdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_chdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_chdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
 								break;
 
 							case 4: /* sys_fchdir(ind fd)  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_fchdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_fchdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_fchdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
 
 								break;
 
 							case 5: /* sys_mkdir  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_mkdir(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
-								fprintf(stdout, "child = %d calling sys_mkdir(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+									 if(flag_debug) fprintf(stdout,"child = %d calling sys_mkdir(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 								break;
 
 							case 6: /* sys_rmdir  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_rmdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_rmdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_rmdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
 								break;
 
 							case 7: /* sys_rename  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_rename(%s, %s)\n", getpid(), (char*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
-								fprintf(stdout, "child = %d calling sys_rename(%s, %s)\n", getpid(), (char*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_rename(%s, %s)\n", getpid(), (char*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
 								break;
 
 							case 8: /* sys_time  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
 								break;
 						
 							case 9: /* sys_readlink  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_readlink(%s, %u, %d)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
-								fprintf(child_log[i], "child = %d calling sys_readlink(%s, %u, %d)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_readlink(%s, %u, %d)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
 								break;
 
 							case 10: /* sys_fchmod  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_fchmnod(%d, %d)\n", getpid(), (int)child_copy_syscall.para1, (int)child_copy_syscall.para2);
-								fprintf(stdout, "child = %d calling sys_fchmod(%d, %d)\n", getpid(), (int)child_copy_syscall.para1, (int)child_copy_syscall.para2);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_fchmod(%d, %d)\n", getpid(), (int)child_copy_syscall.para1, (int)child_copy_syscall.para2);
 								break;
 
 							case 11: /* sys_sync  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_sync()\n", getpid());
-								fprintf(stdout, "child = %d calling sys_sync()\n", getpid());
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_sync()\n", getpid());
 								break;
 
 							default:
@@ -435,12 +443,12 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if(flag_log)
 										fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 								}else 
 								{
 									if(flag_log)
 										fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(),(char *) child_copy_syscall.para2 );
-									fprintf(stdout, "child = %d sys_read success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_read success \n", getpid());
 								}
 							}
 							break;
@@ -457,13 +465,13 @@ int main (int argc, char *argv[])
 								//int errsv = errno;
 								if(flag_log)
 									fprintf(child_log[i], "child = %d sys_chmod failed with errno = %d\n", getpid(), errno);
-								fprintf(stdout, "child = %d sys_chmod failed with errno = %d\n", getpid(), errno);
+								if(flag_debug) fprintf(stdout, "child = %d sys_chmod failed with errno = %d\n", getpid(), errno);
 							}
 							else
 							{
 								if (flag_log)
 									fprintf(child_log[i], "child = %d sys_chmod success \n", getpid());
-								fprintf(stdout, "child = %d sys_chmod success \n", getpid());
+								if(flag_debug) fprintf(stdout, "child = %d sys_chmod success \n", getpid());
 							}
 						
 							break;
@@ -484,13 +492,13 @@ int main (int argc, char *argv[])
 										//int errsv = errno;
 										if (flag_log)
 											fprintf(child_log[i], "child = %d sys_write failed with errno = %d\n", getpid(), errno);
-										fprintf(stdout, "child = %d sys_write failed with errno = %d\n", getpid(), errno);
+										if(flag_debug) fprintf(stdout, "child = %d sys_write failed with errno = %d\n", getpid(), errno);
 									}
 									else
 									{
 										if (flag_log)
 											fprintf(child_log[i], "child = %d sys_write success with %s\n", getpid(), (char *)child_copy_syscall.para2);
-										fprintf(stdout, "child = %d sys_write success \n", getpid());
+										if(flag_debug) fprintf(stdout, "child = %d sys_write success \n", getpid());
 									}
 								}
 								break;
@@ -504,13 +512,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_chdir failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_dir failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_dir failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_chdir success \n", getpid());
-									fprintf(stdout, "child = %d sys_chdir success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_chdir success \n", getpid());
 								}
 
 								break;
@@ -523,13 +531,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_fchdir failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_fdir failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_fdir failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_fchdir success \n", getpid());
-									fprintf(stdout, "child = %d sys_fchdir success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_fchdir success \n", getpid());
 								}
 
 								break;
@@ -546,13 +554,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_mkdir failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_mkdir failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_mkdir failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_mkdir success \n", getpid());
-									fprintf(stdout, "child = %d sys_mkdir success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_mkdir success \n", getpid());
 								}
 
 								break;
@@ -568,13 +576,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_rmdir failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_rmdir failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_rmdir failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_rmdir success \n", getpid());
-									fprintf(stdout, "child = %d sys_rmdir success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_rmdir success \n", getpid());
 								}
 
 								break;
@@ -590,13 +598,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_rename failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_rename failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_rename failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_rename success \n", getpid());
-									fprintf(stdout, "child = %d sys_rename success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_rename success \n", getpid());
 								}
 
 								break;
@@ -614,13 +622,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_time failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_time failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_time failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_time success \n", getpid());
-									fprintf(stdout, "child = %d sys_time success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_time success \n", getpid());
 								}
 
 								break;
@@ -636,13 +644,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_readlink failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_readlink failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_readlink failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_readlink success \n", getpid());
-									fprintf(stdout, "child = %d sys_readlink success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_readlink success \n", getpid());
 								}
 
 								break;
@@ -658,13 +666,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_fchmod failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_fchmod failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_fchmod failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_fchmod success \n", getpid());
-									fprintf(stdout, "child = %d sys_fchmod success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_fchmod success \n", getpid());
 								}
 
 								break;
@@ -679,13 +687,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_sync failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_sync failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_sync failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_sync success \n", getpid());
-									fprintf(stdout, "child = %d sys_sync success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_sync success \n", getpid());
 								}
 
 								break;
@@ -696,7 +704,7 @@ int main (int argc, char *argv[])
 						//end of while loop
 					}
 					
-					return 0;
+					//return 0;
 						//end of child proc
 				}
 						
@@ -728,8 +736,11 @@ int main (int argc, char *argv[])
 		if (result == 0) {
 		  //fprintf(stdout, "Child = %d still alive\n",childPID[i]);
 		} else if (result == -1) {
-		   //fprintf(stdout, "Child = %d error\n",childPID[i]);
+		   fprintf(stderr, "Child = %d return result = -1  error\n",childPID[i]);
+		   exit(1);
 		} else {
+			fprintf(stderr, "Child = %d return result = %d error\n",childPID[i],result);
+		   exit(1);
 				  //fprintf(stdout, "Child = %d exit and we respawn it here\n",childPID[i]);
 		  
 				  //respawn child here.
@@ -945,7 +956,7 @@ int main (int argc, char *argv[])
 								{
 								if(flag_log)
 									fprintf(child_log[i],"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
-								fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2,(int) child_copy_syscall.para3);
+								if(flag_debug) fprintf(stdout,"child = %d calling sys_read(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2,(int) child_copy_syscall.para3);
 								}
 							
 							break;
@@ -954,7 +965,7 @@ int main (int argc, char *argv[])
 							//sys_chmod
 							if(flag_log)
 									fprintf(child_log[i],"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
-								fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+								if(flag_debug) fprintf(stdout,"child = %d calling sys_chmod(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 							break;
 
 							case 2:
@@ -964,7 +975,7 @@ int main (int argc, char *argv[])
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
-									fprintf(stdout, "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+									if(flag_debug) fprintf(stdout, "child = %d calling sys_write(%d,%x,%d)\n", getpid(), (int)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
 								}
 
 								break;
@@ -972,56 +983,56 @@ int main (int argc, char *argv[])
 							case 3: /* sys_chdir(const char* dir) */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_chdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_chdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_chdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
 								break;
 
 							case 4: /* sys_fchdir(ind fd)  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_fchdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_fchdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_fchdir(%d)\n", getpid(), (int)child_copy_syscall.para1);
 
 								break;
 
 							case 5: /* sys_mkdir  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_mkdir(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
-								fprintf(stdout, "child = %d calling sys_mkdir(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_mkdir(%s,%o)\n", getpid(), (char*)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2);
 								break;
 
 							case 6: /* sys_rmdir  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_rmdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_rmdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_rmdir(%s)\n", getpid(), (char*)child_copy_syscall.para1);
 								break;
 
 							case 7: /* sys_rename  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_rename(%s, %s)\n", getpid(), (char*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
-								fprintf(stdout, "child = %d calling sys_rename(%s, %s)\n", getpid(), (char*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_rename(%s, %s)\n", getpid(), (char*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
 								break;
 
 							case 8: /* sys_time  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
 								break;
 						
 							case 9: /* sys_readlink  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_readlink(%s, %u, %d)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
-								fprintf(child_log[i], "child = %d calling sys_readlink(%s, %u, %d)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_readlink(%s, %u, %d)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
 								break;
 
 							case 10: /* sys_fchmod  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_fchmnod(%d, %d)\n", getpid(), (int)child_copy_syscall.para1, (int)child_copy_syscall.para2);
-								fprintf(stdout, "child = %d calling sys_fchmod(%d, %d)\n", getpid(), (int)child_copy_syscall.para1, (int)child_copy_syscall.para2);
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_fchmod(%d, %d)\n", getpid(), (int)child_copy_syscall.para1, (int)child_copy_syscall.para2);
 								break;
 
 							case 11: /* sys_sync  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_sync()\n", getpid());
-								fprintf(stdout, "child = %d calling sys_sync()\n", getpid());
+								if(flag_debug) fprintf(stdout, "child = %d calling sys_sync()\n", getpid());
 								break;
 
 							default:
@@ -1054,12 +1065,12 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if(flag_log)
 										fprintf(child_log[i], "child = %d sys_read failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_read failed with errno = %d\n", getpid(), errno);
 								}else 
 								{
 									if(flag_log)
 										fprintf(child_log[i], "child = %d sys_read success with %s\n", getpid(),(char *) child_copy_syscall.para2 );
-									fprintf(stdout, "child = %d sys_read success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_read success \n", getpid());
 								}
 							}
 							break;
@@ -1076,13 +1087,13 @@ int main (int argc, char *argv[])
 								//int errsv = errno;
 								if(flag_log)
 									fprintf(child_log[i], "child = %d sys_chmod failed with errno = %d\n", getpid(), errno);
-								fprintf(stdout, "child = %d sys_chmod failed with errno = %d\n", getpid(), errno);
+								if(flag_debug) fprintf(stdout, "child = %d sys_chmod failed with errno = %d\n", getpid(), errno);
 							}
 							else
 							{
 								if (flag_log)
 									fprintf(child_log[i], "child = %d sys_chmod success \n", getpid());
-								fprintf(stdout, "child = %d sys_chmod success \n", getpid());
+								if(flag_debug) fprintf(stdout, "child = %d sys_chmod success \n", getpid());
 							}
 						
 							break;
@@ -1103,13 +1114,13 @@ int main (int argc, char *argv[])
 										//int errsv = errno;
 										if (flag_log)
 											fprintf(child_log[i], "child = %d sys_write failed with errno = %d\n", getpid(), errno);
-										fprintf(stdout, "child = %d sys_write failed with errno = %d\n", getpid(), errno);
+										if(flag_debug) fprintf(stdout, "child = %d sys_write failed with errno = %d\n", getpid(), errno);
 									}
 									else
 									{
 										if (flag_log)
 											fprintf(child_log[i], "child = %d sys_write success with %s\n", getpid(), (char *)child_copy_syscall.para2);
-										fprintf(stdout, "child = %d sys_write success \n", getpid());
+										if(flag_debug) fprintf(stdout, "child = %d sys_write success \n", getpid());
 									}
 								}
 								break;
@@ -1123,13 +1134,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_chdir failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_dir failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_dir failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_chdir success \n", getpid());
-									fprintf(stdout, "child = %d sys_chdir success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_chdir success \n", getpid());
 								}
 
 								break;
@@ -1142,13 +1153,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_fchdir failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_fdir failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_fdir failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_fchdir success \n", getpid());
-									fprintf(stdout, "child = %d sys_fchdir success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_fchdir success \n", getpid());
 								}
 
 								break;
@@ -1165,13 +1176,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_mkdir failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_mkdir failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_mkdir failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_mkdir success \n", getpid());
-									fprintf(stdout, "child = %d sys_mkdir success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_mkdir success \n", getpid());
 								}
 
 								break;
@@ -1187,13 +1198,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_rmdir failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_rmdir failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_rmdir failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_rmdir success \n", getpid());
-									fprintf(stdout, "child = %d sys_rmdir success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_rmdir success \n", getpid());
 								}
 
 								break;
@@ -1209,13 +1220,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_rename failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_rename failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_rename failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_rename success \n", getpid());
-									fprintf(stdout, "child = %d sys_rename success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_rename success \n", getpid());
 								}
 
 								break;
@@ -1233,13 +1244,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_time failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_time failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_time failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_time success \n", getpid());
-									fprintf(stdout, "child = %d sys_time success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_time success \n", getpid());
 								}
 
 								break;
@@ -1255,13 +1266,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_readlink failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_readlink failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_readlink failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_readlink success \n", getpid());
-									fprintf(stdout, "child = %d sys_readlink success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_readlink success \n", getpid());
 								}
 
 								break;
@@ -1277,13 +1288,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_fchmod failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_fchmod failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_fchmod failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_fchmod success \n", getpid());
-									fprintf(stdout, "child = %d sys_fchmod success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_fchmod success \n", getpid());
 								}
 
 								break;
@@ -1298,13 +1309,13 @@ int main (int argc, char *argv[])
 									//int errsv = errno;
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_sync failed with errno = %d\n", getpid(), errno);
-									fprintf(stdout, "child = %d sys_sync failed with errno = %d\n", getpid(), errno);
+									if(flag_debug) fprintf(stdout, "child = %d sys_sync failed with errno = %d\n", getpid(), errno);
 								}
 								else
 								{
 									if (flag_log)
 										fprintf(child_log[i], "child = %d sys_sync success \n", getpid());
-									fprintf(stdout, "child = %d sys_sync success \n", getpid());
+									if(flag_debug) fprintf(stdout, "child = %d sys_sync success \n", getpid());
 								}
 
 								break;
@@ -1315,7 +1326,7 @@ int main (int argc, char *argv[])
 						//end of while loop
 					}
 					
-					return 0;
+					//return 0;
 						//end of child proc
 				}
 						
