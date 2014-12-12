@@ -49,7 +49,7 @@ int main (int argc, char *argv[])
 		}
 		else if (strcmp(argv[i], d) == 0)
 		{
-			flag_log = 1;
+			flag_debug = 1;
 			i++;
 			fprintf(stdout,"debug mod activated.\n");
 		}
@@ -703,8 +703,8 @@ int main (int argc, char *argv[])
 							}
 						//end of while loop
 					}
-					
-					//return 0;
+					fprintf(stderr,"child = %d ended\n",getpid());
+					exit(1);
 						//end of child proc
 				}
 						
@@ -740,8 +740,8 @@ int main (int argc, char *argv[])
 		   exit(1);
 		} else {
 			fprintf(stderr, "Child = %d return result = %d error\n",childPID[i],result);
-		   exit(1);
-				  //fprintf(stdout, "Child = %d exit and we respawn it here\n",childPID[i]);
+
+			fprintf(stderr, "Child = %d exit and we respawn it here\n",childPID[i]);
 		  
 				  //respawn child here.
 		  		 
@@ -1326,7 +1326,8 @@ int main (int argc, char *argv[])
 						//end of while loop
 					}
 					
-					//return 0;
+					fprintf(stderr,"child = %d ended\n",getpid());
+					exit(1);
 						//end of child proc
 				}
 						
