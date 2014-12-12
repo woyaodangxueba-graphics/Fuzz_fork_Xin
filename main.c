@@ -203,16 +203,21 @@ int main (int argc, char *argv[])
 								break;
 
 							case 3: /* sys_chdir() */
-								child_copy_syscall.para1 = Pool->dirs_pool[rand() % (cur_dir_num + 100)];
+								child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % (cur_dir_num + 100)];
 
 								break;
 
 							case 4: /* sys_fchidr() */
-								for(unsigned int tmp4 = 0;(tmp4 == 0) ||(tmp4 == 1)||(tmp4 == 2) ; )
+
+								{
+								unsigned int tmp4 = 0;
+
+								for(;(tmp4 == 0) ||(tmp4 == 1)||(tmp4 == 2); )
 								{
 									tmp4 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
 								}
-								child_copy_syscall.para1 =  temp4;
+								child_copy_syscall.para1 =  tmp4;
+								}
 
 								break;
 
@@ -241,8 +246,10 @@ int main (int argc, char *argv[])
 
 							case 8:
 							//sys_time
+								{
 								time_t *tmp_time = (time_t*)malloc(sizeof(time_t));
-								child_copy_syscall.para1 = (unsigned long)tmp;
+								child_copy_syscall.para1 = (unsigned long)tmp_time;
+								}
 
 								break;
 
@@ -269,11 +276,14 @@ int main (int argc, char *argv[])
 								break;
 
 							case 10: //sys_fchmod
-								for(unsigned int tmp10 = 0;(tmp10 == 0) ||(tmp10 == 1)||(tmp10 == 2) ; )
+								{
+								unsigned int tmp10 = 0;
+								for(;(tmp10 == 0) ||(tmp10 == 1)||(tmp10 == 2) ; )
 								{
 									tmp10 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
 								}
-								child_copy_syscall.para1 =  temp10;
+								child_copy_syscall.para1 =  tmp10;
+								}
 
 								if (rand() % 2)
 								{
@@ -374,19 +384,19 @@ int main (int argc, char *argv[])
 							case 8: /* sys_time  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
+								fprintf(stdout, "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
 								break;
 						
 							case 9: /* sys_readlink  */
 								if (flag_log)
-									fprintf(child_log[i], "child = %d calling sys_readlink(%s, %p, %d)\n", getpid(), (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_readlink(%s, %p, %d)\n", getpid(), (time_t*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
+									fprintf(child_log[i], "child = %d calling sys_readlink(%s, %u, %d)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+								fprintf(child_log[i], "child = %d calling sys_readlink(%s, %u, %d)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
 								break;
 
 							case 10: /* sys_fchmod  */
 								if (flag_log)
-									fprintf(child_log[i], "child = %d calling sys_fchmnod(%s, %p, %d)\n", getpid(), (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_fchmod(%d, %u)\n", getpid(), child_copy_syscall.para1, child_copy_syscall.para2);
+									fprintf(child_log[i], "child = %d calling sys_fchmnod(%d, %d)\n", getpid(), (int)child_copy_syscall.para1, (int)child_copy_syscall.para2);
+								fprintf(stdout, "child = %d calling sys_fchmod(%d, %d)\n", getpid(), (int)child_copy_syscall.para1, (int)child_copy_syscall.para2);
 								break;
 
 							case 11: /* sys_sync  */
@@ -723,7 +733,8 @@ int main (int argc, char *argv[])
 				  //fprintf(stdout, "Child = %d exit and we respawn it here\n",childPID[i]);
 		  
 				  //respawn child here.
-		  		 childPID[i] = fork();
+		  		 
+				childPID[i] = fork();
 			if(childPID[i] >= 0) // fork was successful
 			{
 				if(childPID[i] == 0) // child process
@@ -811,16 +822,21 @@ int main (int argc, char *argv[])
 								break;
 
 							case 3: /* sys_chdir() */
-								child_copy_syscall.para1 = Pool->dirs_pool[rand() % (cur_dir_num + 100)];
+								child_copy_syscall.para1 = (unsigned long)Pool->dirs_pool[rand() % (cur_dir_num + 100)];
 
 								break;
 
 							case 4: /* sys_fchidr() */
-								for(unsigned int tmp4 = 0;(tmp4 == 0) ||(tmp4 == 1)||(tmp4 == 2) ; )
+
+								{
+								unsigned int tmp4 = 0;
+
+								for(;(tmp4 == 0) ||(tmp4 == 1)||(tmp4 == 2); )
 								{
 									tmp4 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
 								}
-								child_copy_syscall.para1 =  temp4;
+								child_copy_syscall.para1 =  tmp4;
+								}
 
 								break;
 
@@ -849,8 +865,10 @@ int main (int argc, char *argv[])
 
 							case 8:
 							//sys_time
+								{
 								time_t *tmp_time = (time_t*)malloc(sizeof(time_t));
-								child_copy_syscall.para1 = (unsigned long)tmp;
+								child_copy_syscall.para1 = (unsigned long)tmp_time;
+								}
 
 								break;
 
@@ -877,11 +895,14 @@ int main (int argc, char *argv[])
 								break;
 
 							case 10: //sys_fchmod
-								for(unsigned int tmp10 = 0;(tmp10 == 0) ||(tmp10 == 1)||(tmp10 == 2) ; )
+								{
+								unsigned int tmp10 = 0;
+								for(;(tmp10 == 0) ||(tmp10 == 1)||(tmp10 == 2) ; )
 								{
 									tmp10 = Pool->fd_pool[rand() % (files_number + 3 + 100)];
 								}
-								child_copy_syscall.para1 =  temp10;
+								child_copy_syscall.para1 =  tmp10;
+								}
 
 								if (rand() % 2)
 								{
@@ -982,19 +1003,19 @@ int main (int argc, char *argv[])
 							case 8: /* sys_time  */
 								if (flag_log)
 									fprintf(child_log[i], "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
+								fprintf(stdout, "child = %d calling sys_time(%p)\n", getpid(), (time_t*)child_copy_syscall.para1);
 								break;
 						
 							case 9: /* sys_readlink  */
 								if (flag_log)
-									fprintf(child_log[i], "child = %d calling sys_readlink(%s, %p, %d)\n", getpid(), (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_readlink(%s, %p, %d)\n", getpid(), (time_t*)child_copy_syscall.para1, (char*)child_copy_syscall.para2);
+									fprintf(child_log[i], "child = %d calling sys_readlink(%s, %u, %d)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
+								fprintf(child_log[i], "child = %d calling sys_readlink(%s, %u, %d)\n", getpid(), (char *)child_copy_syscall.para1, (unsigned int)child_copy_syscall.para2, (int)child_copy_syscall.para3);
 								break;
 
 							case 10: /* sys_fchmod  */
 								if (flag_log)
-									fprintf(child_log[i], "child = %d calling sys_fchmnod(%s, %p, %d)\n", getpid(), (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1, (time_t*)child_copy_syscall.para1);
-								fprintf(stdout, "child = %d calling sys_fchmod(%d, %u)\n", getpid(), child_copy_syscall.para1, child_copy_syscall.para2);
+									fprintf(child_log[i], "child = %d calling sys_fchmnod(%d, %d)\n", getpid(), (int)child_copy_syscall.para1, (int)child_copy_syscall.para2);
+								fprintf(stdout, "child = %d calling sys_fchmod(%d, %d)\n", getpid(), (int)child_copy_syscall.para1, (int)child_copy_syscall.para2);
 								break;
 
 							case 11: /* sys_sync  */
@@ -1307,8 +1328,6 @@ int main (int argc, char *argv[])
 				return 1;
 			}
 	
-
-
 		  
 			   }
 		}
